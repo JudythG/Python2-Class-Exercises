@@ -12,7 +12,6 @@ Exercises from in-class demos
 
 ## list comprehensions
 ### Done
-### Not Done
 1. create a 2D matrix
 2. flatten a 2D list
 3. flatten a 2D list and only include strings whose len < 6
