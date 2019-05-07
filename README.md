@@ -2,6 +2,7 @@
 Exercises from in-class demos
 
 ## lambda functions
+### Done
 <table>
   <tr><td>factorial</td><td>Done</td></tr>
   <tr><td>mean</td><td>Done</td></tr>
@@ -25,7 +26,7 @@ Q2: use your generator in the given code
 
 ## exceptions
 ### Done
-Raise an exception
+Raise an exception - raise.py
 
 ## regular expressions
 ### Done
