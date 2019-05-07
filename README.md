@@ -50,7 +50,7 @@ Parse out title and author when line has metacharacters:
 ', by' used to split title from author. Now title has a comma: 
 * '"Children of Thorns, Children of Water," by Aliette de Bodard (Uncanny, July-August 2017)'
 
-### Not Done
+### Not Working
 Separator can be ', by' or ', edited by'
 * '    Luminescent Threads: Connections to Octavia E. Butler, edited by Alexandra Pierce, and Mimi Mondal (Twelfth Planet Press)'
 
