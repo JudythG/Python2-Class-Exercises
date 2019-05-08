@@ -209,6 +209,26 @@ def different_separators():
     print ('different separators exercise')
 
     line = '    Luminescent Threads: Connections to Octavia E. Butler, edited by Alexandra Pierce, and Mimi Mondal (Twelfth Planet Press)'
+    print (line)
+
+    pattern = '\sby\s'
+    p = re.compile(pattern)
+    m = p.search(line)
+    if m:
+        title = parse_title (line[:m.start()])
+        print('Title: ' + title)
+
+        author_pattern = '(.+[^\(]) '
+        pub_pattern = '\((.+[^\)])\)'
+        regex = author_pattern + pub_pattern
+        p = re.compile(regex)
+        m = p.search(line[m.end():])
+        if m:
+            print ('Creator(s): ' + m.group(1))
+            print('Publisher: ' + m.group(2))
+            print()
+    return
+
     #sep_pattern = ',( [a-zA-Z]*) by [a-zA-Z \.]+'
     sep_pattern = ',( [a-zA-Z]*) by [^\(]+'
     p = re.compile(sep_pattern)
@@ -280,6 +300,6 @@ def parsefile (f_name):
 #parse_publishers()
 #update_title_format()
 #comma_in_title()
-#different_separators()
-parsefile('./hugo_2018.txt')
+different_separators()
+#parsefile('./hugo_2018.txt')
 #test()
