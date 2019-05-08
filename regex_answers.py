@@ -191,56 +191,85 @@ def comma_in_title():
         print (m.groups())
     print ()
 
+def testSepPattern(line):
+    print(line)
+    sep_pattern = ',”?( [a-zA-Z])* by [^\(]+'
+    sep_pattern = ',”?( [a-zA-Z])* by [a-zA-Z]+,?[^\(]+'
+    sep_pattern = '\sby\s'
+    p = re.compile(sep_pattern)
+    m = p.search(line)
+    if m:
+        print('Title: ' + line[:m.start()])
+        print ('Author: ' + line[m.start():m.end()])
+        print('Publisher: ' + line[m.end():])
+    print()
+
 # separator can be ', by' or ', edited by'
 def different_separators():
     print ('different separators exercise')
 
     line = '    Luminescent Threads: Connections to Octavia E. Butler, edited by Alexandra Pierce, and Mimi Mondal (Twelfth Planet Press)'
+    #sep_pattern = ',( [a-zA-Z]*) by [a-zA-Z \.]+'
+    sep_pattern = ',( [a-zA-Z]*) by [^\(]+'
+    p = re.compile(sep_pattern)
+    m = p.search(line)
+    if m:
+        print (line)
+        print(line[:m.start()])
+        print (line[m.start():m.end()])
+        print(line[m.end():])
+    return
 
     pattern = '\s*\"*([a-zA-Z\s\-\(\):\.]+),"*\s[\w\s]+\s([a-zA-Z\.\s,]+)\((.+)\)'
     #pattern = '\s*\"+(.+(?!, by $)),"+\sby\s([a-zA-Z\.\s]+)\((.+)\)'
+    pattern = '(.*(^,(\s\w+)? by)),(\s\w+)? by(.*)'
+    pattern = '(.*(^,(\s\w+)? by))'
+    pattern = '(.*[^,])'
     p = re.compile(pattern)
     m = p.search (line)
     if m:
+        print (line)
         print (m.groups())
     print ()
 
+def test ():
+    line = '    “Sun, Moon, Dust” by Ursula Vernon, (Uncanny, May/June 2017)'
+    testSepPattern(line)
+
+def parse_title(s):
+    pattern = '\s*(.+[^,]),'
+    p = re.compile(pattern)
+    m = p.search(s)
+    if m:
+        title = m.group(1)
+        if title.startswith('“'):
+            title = title + '”'
+        return title
+    return s
+
 # new pattern has issues with 'edited by', 'written by', 'illustrated by' strings but I think the old pattern may handle them better
 def parsefile (f_name):
-    pattern = '\s*\"*([0-9a-zA-Z\s\-\(\):\.]+),"*\s[\w\s]*by\s([a-zA-Z\.\s,]+)(\(.+\))'
-    pattern = '\s*\"*([a-zA-Z\s\-\(\):\.]+),"*\s[\w\s]+\s([a-zA-Z\.\s,]+)\((.+)\)'
+    pattern = '\sby\s'
 
-    # JTG: for pattern: how about 1st match : . that excludes ' by ' and variants with a negative lookahead assertion?
-    # second pattern could be . that excludes newlines and (
-    # third pattern would be as is
-
-    title_pattern = '\s*"*(.+(?!,"*\s[\w\s]*by\s]))'
-    sep_pattern = '\s[\w\s]*by\s'
-    author_pattern = '(.+(?!\(\)))'
-    publisher_pattern = '\((.+)\)'
-    pattern = title_pattern + sep_pattern + author_pattern + publisher_pattern
-
-    pattern = '\s*\"*(.+(?!,"*\s[\w\s]*by\s]))\"*,"*\s[\w\s]*by\s(.+(?!\(\)))\((.+)\)'
-
-    p = re.compile(pattern)
+    f_out = open('parsed.txt', 'w')
     f_in = open (f_name, 'r')
     for line in f_in:
+        p = re.compile(pattern)
         m = p.search(line)
         if m:
-            #print (line)
-            print (m.groups())   
-        #else:
-            #print ("ERROR or not a title: %s" % ( line))
-        #print()
+            print (line, file=f_out)
+            title = parse_title (line[:m.start()])
+            print('Title: ' + title, file=f_out)
 
-# try pattern on string with only one double-quote
-#pattern = '([a-zA-Z\s]+), by\s([a-zA-Z\.\s]+)’
-#pattern = '\s+([a-zA-Z\s]+), by\s([a-zA-Z\.\s]+)’
-#pattern = '\s+([a-zA-Z\s]+),\sby\s([a-zA-Z\.\s]+)’
-#pattern = '\s+([a-zA-Z\s]+),\sby\s([a-zA-Z\.\s]+)\(([a-zA-Z]+)\)’
-#pattern = '\s+\"*([a-zA-Z\s\-\(\):]+),"*\sby\s([a-zA-Z\.\s]+)’
-
-#pattern = '\s+\"*([a-zA-Z\s\-\(\):\.]+),"*\s[\w\s]+\s([a-zA-Z\.\s,]+)'
+            author_pattern = '(.+[^\(]) '
+            pub_pattern = '\((.+[^\)])\)'
+            regex = author_pattern + pub_pattern
+            p = re.compile(regex)
+            m = p.search(line[m.end():])
+            if m:
+                print ('Creator(s): ' + m.group(1), file=f_out)
+                print('Publisher: ' + m.group(2), file=f_out)
+                print(' ', file=f_out)
 
 # main
 
@@ -253,16 +282,4 @@ def parsefile (f_name):
 #comma_in_title()
 #different_separators()
 parsefile('./hugo_2018.txt')
-
-# JTG: title formats still not working
-#Luminescent Threads: Connections to Octavia E. Butler, edited by Alexandra Pierce, and Mimi Mondal (Twelfth Planet Press)
-#Monstress, Volume 2: The Blood, written by Marjorie M. Liu, illustrated by Sana Takeda (Image Comics)
-#Bitch Planet, Volume 2: President Bitch, written by Kelly Sue DeConnick, illustrated by Valentine De Landro and Taki Soma, colored by Kelly Fitzpatrick, lettered by Clayton Cowles (Image Comics)
-#“Welcome to your Authentic Indian Experience™,” by Rebecca Roanhorse (Apex, August 2017)
-
-# line:
-    #Paper Girls, Volume 3, written by Brian K. Vaughan, illustrated by Cliff Chiang, colored by Matthew Wilson, lettered by Jared Fletcher (Image Comics)
-# result:
-#('Paper Girls, Volume 3, written by Brian K. Vaughan, illustrated by Cliff Chiang, colored by Matthew Wilson', 'Jared Fletcher ', 'Image Comics')
-# at this point, split into title, creator(s), and publisher
-# have separate regex to split creators
+#test()
