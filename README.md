@@ -53,5 +53,6 @@ Separator can be ', by' or ', edited by'
 * '    Luminescent Threads: Connections to Octavia E. Butler, edited by Alexandra Pierce, and Mimi Mondal (Twelfth Planet Press)'
 
 Parse file hugo_2018.txt
-Working for all lines except one that has a differnet format:
+Working for all lines except one that has a different format:
 * “Sun, Moon, Dust” by Ursula Vernon, (Uncanny, May/June 2017)
+We were told raw data is tricky. 
